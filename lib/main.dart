@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    RendererBinding.instance!.setSemanticsEnabled(true);
+    RendererBinding.instance.setSemanticsEnabled(true);
     return MaterialApp(
       title: 'Audible Checker',
       theme: ThemeData(
