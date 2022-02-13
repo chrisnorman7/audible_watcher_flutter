@@ -96,6 +96,7 @@ class _BooksLoaderState extends State<BooksLoader> {
                   itemBuilder: (context, index) {
                     final audiobook = _audiobooks[index];
                     return ListTile(
+                      autofocus: index == 0,
                       title: Text(audiobook.author),
                       subtitle: Text(audiobook.title),
                       onTap: () => launch(audiobook.url),
@@ -109,6 +110,7 @@ class _BooksLoaderState extends State<BooksLoader> {
                   child = Column(
                     children: [
                       Focus(
+                        autofocus: _audiobooks.isEmpty,
                         child: LinearProgressIndicator(
                           semanticsLabel: 'Checked authors',
                           value: _audiobooks.length * 1 / widget.authors.length,
