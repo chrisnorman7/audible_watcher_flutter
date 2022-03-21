@@ -19,11 +19,11 @@ class AuthorsForm extends StatefulWidget {
 
   /// Create state for this widget.
   @override
-  _AuthorsFormState createState() => _AuthorsFormState();
+  AuthorsFormState createState() => AuthorsFormState();
 }
 
 /// State for [AuthorsForm].
-class _AuthorsFormState extends State<AuthorsForm> {
+class AuthorsFormState extends State<AuthorsForm> {
   /// The controller for the authors text field.
   late final TextEditingController _authorsController;
 
@@ -51,6 +51,7 @@ class _AuthorsFormState extends State<AuthorsForm> {
           title: const Text('Authors'),
         ),
         body: Form(
+          key: _formKey,
           child: TextFormField(
             autofocus: true,
             controller: _authorsController,
@@ -61,7 +62,6 @@ class _AuthorsFormState extends State<AuthorsForm> {
             keyboardType: TextInputType.multiline,
             maxLines: null,
           ),
-          key: _formKey,
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {

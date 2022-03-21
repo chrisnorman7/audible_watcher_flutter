@@ -18,18 +18,20 @@ class AuthorsLoader extends StatefulWidget {
 
   /// Create state for this widget.
   @override
-  _AuthorsLoaderState createState() => _AuthorsLoaderState();
+  AuthorsLoaderState createState() => AuthorsLoaderState();
 }
 
 /// State for [AuthorsLoader].
-class _AuthorsLoaderState extends State<AuthorsLoader> {
+class AuthorsLoaderState extends State<AuthorsLoader> {
   /// Build a widget.
   @override
   Widget build(BuildContext context) => FutureBuilder<List<String>>(
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return ErrorList(
-                error: snapshot.error, stackTrace: snapshot.stackTrace);
+              error: snapshot.error,
+              stackTrace: snapshot.stackTrace,
+            );
           } else if (snapshot.hasData) {
             return BooksLoader(authors: snapshot.requireData);
           } else {

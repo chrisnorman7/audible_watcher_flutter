@@ -1,9 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'audiobook.dart';
 import 'authors_form.dart';
-import 'error_list.dart';
+import 'error_object.dart';
 import 'get_books.dart';
 
 /// A widget that loaded a series of [Audiobook] instances.
@@ -16,22 +18,37 @@ class BooksLoader extends StatefulWidget {
 
   /// Create state for this widget.
   @override
-  _BooksLoaderState createState() => _BooksLoaderState();
+  BooksLoaderState createState() => BooksLoaderState();
 }
 
 /// State for [BooksLoader].
-class _BooksLoaderState extends State<BooksLoader> {
+class BooksLoaderState extends State<BooksLoader> {
   /// The stream to use for loading books.
-  Stream<Audiobook>? _stream;
+  StreamSubscription<Audiobook>? _subscription;
 
   /// The audiobooks that have loaded so far.
   late final List<Audiobook> _audiobooks;
+
+  /// Any error that has occurred.
+  ErrorObject? _errorObject;
 
   /// Initialise the audiobooks list.
   @override
   void initState() {
     super.initState();
     _audiobooks = [];
+    startSubscription();
+  }
+
+  /// Start listening for books.
+  void startSubscription() {
+    _subscription = getBooks(widget.authors).listen(
+      _audiobooks.add,
+      onError: (Object e, StackTrace? s) {
+        setState(() => _errorObject = ErrorObject(e, s));
+      },
+      onDone: () => _subscription = null,
+    );
   }
 
   /// Build a widget.
@@ -46,10 +63,12 @@ class _BooksLoaderState extends State<BooksLoader> {
             ElevatedButton(
               onPressed: widget.authors.isEmpty
                   ? null
-                  : () => setState(() {
-                        _audiobooks.clear();
-                        _stream = null;
-                      }),
+                  : () => setState(
+                        () {
+                          _audiobooks.clear();
+                          _subscription = null;
+                        },
+                      ),
               child:
                   const Icon(Icons.refresh_rounded, semanticLabel: 'Refresh'),
             )
@@ -62,82 +81,57 @@ class _BooksLoaderState extends State<BooksLoader> {
         ),
       );
     }
-    var stream = _stream;
-    if (stream == null) {
-      stream = getBooks(widget.authors);
-      _stream = stream;
-    }
-    return StreamBuilder<Audiobook>(
-      builder: (context, snapshot) {
-        final Widget child;
-        if (snapshot.hasError) {
-          child =
-              ErrorList(error: snapshot.error, stackTrace: snapshot.stackTrace);
-        } else {
-          if (snapshot.hasData &&
-              snapshot.connectionState != ConnectionState.waiting) {
-            _audiobooks.add(snapshot.requireData);
-          }
-          switch (snapshot.connectionState) {
-            case ConnectionState.none:
-              throw UnimplementedError('That should not have happened.');
-            case ConnectionState.waiting:
-              child = const CircularProgressIndicator(
-                semanticsLabel: 'Loading webpage...',
-              );
-              break;
-            default:
-              if (_audiobooks.isEmpty) {
-                child = const Center(
-                  child: Text('There are no audiobooks to show.'),
-                );
-              } else {
-                final listView = ListView.builder(
-                  itemBuilder: (context, index) {
-                    final audiobook = _audiobooks[index];
-                    return ListTile(
-                      autofocus: index == 0,
-                      title: Text(audiobook.author),
-                      subtitle: Text(audiobook.title),
-                      onTap: () => launch(audiobook.url),
-                    );
-                  },
-                  itemCount: _audiobooks.length,
-                );
-                if (snapshot.connectionState == ConnectionState.done) {
-                  child = listView;
-                } else {
-                  child = Column(
-                    children: [
-                      Focus(
-                        autofocus: _audiobooks.isEmpty,
-                        child: LinearProgressIndicator(
-                          semanticsLabel: 'Checked authors',
-                          value: _audiobooks.length * 1 / widget.authors.length,
-                        ),
-                      ),
-                      Expanded(child: listView)
-                    ],
-                  );
-                }
-              }
-          }
-        }
-        return Scaffold(
-          appBar: AppBar(
-            title: const Text('New Audible Releases'),
-            actions: [
-              getAuthorsButton(),
-              FloatingActionButton(
-                  onPressed: reload,
-                  child: const Icon(Icons.refresh_outlined),
-                  tooltip: 'Reload'),
-            ],
+    final List<Widget> children = [];
+    if (_subscription != null) {
+      children.add(
+        Focus(
+          autofocus: true,
+          child: LinearProgressIndicator(
+            value: _audiobooks.length / widget.authors.length,
           ),
-          body: child,
-        );
-      },
-      stream: stream,
+        ),
+      );
+    }
+    final errorObject = _errorObject;
+    if (errorObject != null) {
+      _errorObject = null;
+      children.add(
+        ListTile(
+          title: Text('${errorObject.e}'),
+          subtitle: Text('${errorObject.s}'),
+          onTap: () {},
+        ),
+      );
+    }
+    return Scaffold(
+      appBar: AppBar(
+        actions: [
+          getAuthorsButton(),
+          ElevatedButton(
+            onPressed: reload,
+            child: const Icon(
+              Icons.refresh_outlined,
+              semanticLabel: 'Refresh',
+            ),
+          ),
+        ],
+        title: const Text('New Releases'),
+      ),
+      body: ListView.builder(
+        itemBuilder: (context, index) {
+          if (index < children.length) {
+            return children[index];
+          }
+          final audiobook = _audiobooks[index - children.length];
+          return ListTile(
+            autofocus: index == 0,
+            title: Text(audiobook.author),
+            subtitle: Text(audiobook.title),
+            onTap: () => launch(audiobook.url),
+          );
+        },
+        itemCount: _audiobooks.length + children.length,
+      ),
     );
   }
 
@@ -163,11 +157,17 @@ class _BooksLoaderState extends State<BooksLoader> {
       );
 
   /// Refresh the book list.
-  void reload({VoidCallback? also}) => setState(() {
-        _audiobooks.clear();
-        _stream = null;
-        if (also != null) {
-          also();
-        }
-      });
+  void reload({VoidCallback? also}) {
+    _subscription?.cancel();
+    _audiobooks.clear();
+    startSubscription();
+    setState(() {});
+  }
+
+  /// Dispose of the subscription.
+  @override
+  void dispose() {
+    super.dispose();
+    _subscription?.cancel();
+  }
 }
