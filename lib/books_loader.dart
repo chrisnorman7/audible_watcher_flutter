@@ -43,7 +43,7 @@ class BooksLoaderState extends State<BooksLoader> {
   /// Start listening for books.
   void startSubscription() {
     _subscription = getBooks(widget.authors).listen(
-      _audiobooks.add,
+      (event) => setState(() => _audiobooks.add(event)),
       onError: (Object e, StackTrace? s) {
         setState(() => _errorObject = ErrorObject(e, s));
       },
