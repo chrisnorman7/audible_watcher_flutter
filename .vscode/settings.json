@@ -1,6 +1,7 @@
 {
   "cSpell.words": [
     "analyzer",
+    "bools",
     "COINIT",
     "color",
     "Colors",
@@ -8,7 +9,10 @@
     "formals",
     "HINSTANCE",
     "pubdate",
+    "pubspec",
     "Schyler",
-    "Trajan"
+    "todos",
+    "Trajan",
+    "unawaited"
   ]
 }

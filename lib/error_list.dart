@@ -7,7 +7,7 @@ class ErrorList extends StatelessWidget {
   const ErrorList({
     required this.error,
     required this.stackTrace,
-    Key? key,
+    final Key? key,
   }) : super(key: key);
 
   /// The error to use.
@@ -18,7 +18,7 @@ class ErrorList extends StatelessWidget {
 
   /// Build the widget.
   @override
-  Widget build(BuildContext context) => ListView(
+  Widget build(final BuildContext context) => ListView(
         children: [
           ListTile(
             autofocus: true,

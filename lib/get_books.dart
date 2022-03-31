@@ -8,7 +8,7 @@ import 'audiobook.dart';
 final http = Dio();
 
 /// Download audible books.
-Stream<Audiobook> getBooks(List<String> authors) async* {
+Stream<Audiobook> getBooks(final List<String> authors) async* {
   AUTHORS:
   for (final author in authors) {
     final uri = Uri(

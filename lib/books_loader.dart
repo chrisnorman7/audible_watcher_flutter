@@ -11,7 +11,7 @@ import 'get_books.dart';
 /// A widget that loaded a series of [Audiobook] instances.
 class BooksLoader extends StatefulWidget {
   /// Create an instance.
-  const BooksLoader({required this.authors, Key? key}) : super(key: key);
+  const BooksLoader({required this.authors, final Key? key}) : super(key: key);
 
   /// The authors whose books should be loaded.
   final List<String> authors;
@@ -43,9 +43,11 @@ class BooksLoaderState extends State<BooksLoader> {
   /// Start listening for books.
   void startSubscription() {
     _subscription = getBooks(widget.authors).listen(
-      (event) => setState(() => _audiobooks.add(event)),
-      onError: (Object e, StackTrace? s) {
-        setState(() => _errorObject = ErrorObject(e, s));
+      (final event) => setState(() => _audiobooks.add(event)),
+      onError: (final dynamic e, final dynamic s) {
+        setState(
+          () => _errorObject = ErrorObject(e as Object, s as StackTrace?),
+        );
       },
       onDone: () => _subscription = null,
     );
@@ -53,7 +55,7 @@ class BooksLoaderState extends State<BooksLoader> {
 
   /// Build a widget.
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     if (widget.authors.isEmpty) {
       return Scaffold(
         appBar: AppBar(
@@ -76,12 +78,13 @@ class BooksLoaderState extends State<BooksLoader> {
         ),
         body: const Center(
           child: Text(
-              'You have not entered any authors to check. Please click the '
-              '"Authors" button and enter some.'),
+            'You have not entered any authors to check. Please click the '
+            '"Authors" button and enter some.',
+          ),
         ),
       );
     }
-    final List<Widget> children = [];
+    final children = <Widget>[];
     if (_subscription != null) {
       children.add(
         Focus(
@@ -118,7 +121,7 @@ class BooksLoaderState extends State<BooksLoader> {
         title: const Text('New Releases'),
       ),
       body: ListView.builder(
-        itemBuilder: (context, index) {
+        itemBuilder: (final context, final index) {
           if (index < children.length) {
             return children[index];
           }
@@ -140,14 +143,17 @@ class BooksLoaderState extends State<BooksLoader> {
         onPressed: () async {
           final authors = await Navigator.of(context).push<List<String>>(
             MaterialPageRoute<List<String>>(
-              builder: (context) => AuthorsForm(authors: widget.authors),
+              builder: (final context) => AuthorsForm(authors: widget.authors),
             ),
           );
-          if (authors != null) {
+          if (authors != null && mounted) {
+            widget.authors.clear();
+            widget.authors.addAll(authors);
             reload(
-                also: () => widget.authors
-                  ..clear()
-                  ..addAll(authors));
+              also: () => widget.authors
+                ..clear()
+                ..addAll(authors),
+            );
           }
         },
         icon: const Icon(
@@ -157,7 +163,7 @@ class BooksLoaderState extends State<BooksLoader> {
       );
 
   /// Refresh the book list.
-  void reload({VoidCallback? also}) {
+  void reload({final VoidCallback? also}) {
     _subscription?.cancel();
     _audiobooks.clear();
     startSubscription();

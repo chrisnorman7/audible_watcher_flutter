@@ -11,7 +11,7 @@ const authorsKey = 'authors';
 /// A widget for loading authors from a [SharedPreferences] instance.
 class AuthorsLoader extends StatefulWidget {
   /// Create an instance.
-  const AuthorsLoader({Key? key}) : super(key: key);
+  const AuthorsLoader({final Key? key}) : super(key: key);
 
   /// Route name.
   static const String routeName = '/';
@@ -25,8 +25,8 @@ class AuthorsLoader extends StatefulWidget {
 class AuthorsLoaderState extends State<AuthorsLoader> {
   /// Build a widget.
   @override
-  Widget build(BuildContext context) => FutureBuilder<List<String>>(
-        builder: (context, snapshot) {
+  Widget build(final BuildContext context) => FutureBuilder<List<String>>(
+        builder: (final context, final snapshot) {
           if (snapshot.hasError) {
             return ErrorList(
               error: snapshot.error,

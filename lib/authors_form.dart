@@ -12,7 +12,7 @@ const _lineSplitter = LineSplitter();
 /// A form which allows the saving of authors.
 class AuthorsForm extends StatefulWidget {
   /// Create an instance.
-  const AuthorsForm({required this.authors, Key? key}) : super(key: key);
+  const AuthorsForm({required this.authors, final Key? key}) : super(key: key);
 
   /// The current list of authors.
   final List<String> authors;
@@ -33,7 +33,7 @@ class AuthorsFormState extends State<AuthorsForm> {
   /// Get the list of authors.
   List<String> get authors => _lineSplitter
       .convert(_authorsController.text)
-      .where((element) => element.trim().isNotEmpty)
+      .where((final element) => element.trim().isNotEmpty)
       .toList();
 
   /// Set up the controller and the form key.
@@ -46,7 +46,7 @@ class AuthorsFormState extends State<AuthorsForm> {
 
   /// Build a widget.
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(final BuildContext context) => Scaffold(
         appBar: AppBar(
           title: const Text('Authors'),
         ),
@@ -65,7 +65,7 @@ class AuthorsFormState extends State<AuthorsForm> {
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () {
-            if (_formKey.currentState?.validate() == true) {
+            if (_formKey.currentState?.validate() ?? true) {
               saveAuthors();
               Navigator.of(context).pop(authors);
             }
@@ -87,6 +87,6 @@ class AuthorsFormState extends State<AuthorsForm> {
   /// Save the current authors.
   Future<void> saveAuthors() async {
     final instance = await SharedPreferences.getInstance();
-    instance.setStringList(authorsKey, authors);
+    await instance.setStringList(authorsKey, authors);
   }
 }

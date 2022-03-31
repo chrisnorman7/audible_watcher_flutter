@@ -11,11 +11,11 @@ void main() {
 /// The main app.
 class MyApp extends StatelessWidget {
   /// Create an instance.
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({final Key? key}) : super(key: key);
 
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
+  Widget build(final BuildContext context) {
     RendererBinding.instance.setSemanticsEnabled(true);
     return MaterialApp(
       title: 'Audible Checker',
@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: AuthorsLoader.routeName,
       routes: {
-        AuthorsLoader.routeName: (context) => const AuthorsLoader(),
+        AuthorsLoader.routeName: (final context) => const AuthorsLoader(),
       },
     );
   }
