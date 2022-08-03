@@ -11,7 +11,7 @@ const authorsKey = 'authors';
 /// A widget for loading authors from a [SharedPreferences] instance.
 class AuthorsLoader extends StatefulWidget {
   /// Create an instance.
-  const AuthorsLoader({final Key? key}) : super(key: key);
+  const AuthorsLoader({super.key});
 
   /// Route name.
   static const String routeName = '/';

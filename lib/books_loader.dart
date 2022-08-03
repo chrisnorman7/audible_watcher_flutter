@@ -11,7 +11,7 @@ import 'get_books.dart';
 /// A widget that loaded a series of [Audiobook] instances.
 class BooksLoader extends StatefulWidget {
   /// Create an instance.
-  const BooksLoader({required this.authors, final Key? key}) : super(key: key);
+  const BooksLoader({required this.authors, super.key});
 
   /// The authors whose books should be loaded.
   final List<String> authors;
@@ -130,7 +130,7 @@ class BooksLoaderState extends State<BooksLoader> {
             autofocus: index == 0,
             title: Text(audiobook.author),
             subtitle: Text(audiobook.title),
-            onTap: () => launch(audiobook.url),
+            onTap: () => launchUrl(Uri.parse(audiobook.url)),
           );
         },
         itemCount: _audiobooks.length + children.length,

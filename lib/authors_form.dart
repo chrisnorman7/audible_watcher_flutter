@@ -12,7 +12,7 @@ const _lineSplitter = LineSplitter();
 /// A form which allows the saving of authors.
 class AuthorsForm extends StatefulWidget {
   /// Create an instance.
-  const AuthorsForm({required this.authors, final Key? key}) : super(key: key);
+  const AuthorsForm({required this.authors, super.key});
 
   /// The current list of authors.
   final List<String> authors;

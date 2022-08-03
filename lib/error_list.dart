@@ -7,8 +7,8 @@ class ErrorList extends StatelessWidget {
   const ErrorList({
     required this.error,
     required this.stackTrace,
-    final Key? key,
-  }) : super(key: key);
+    super.key,
+  });
 
   /// The error to use.
   final Object? error;
