@@ -38,6 +38,11 @@ class MainScreenState extends ConsumerState<MainScreen> {
               newCallback: newAuthor,
               child: const AuthorsPage(),
             ),
+            floatingActionButton: FloatingActionButton(
+              onPressed: newAuthor,
+              tooltip: 'New Author',
+              child: const Icon(Icons.add),
+            ),
           )
         ],
       );
