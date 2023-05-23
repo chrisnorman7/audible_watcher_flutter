@@ -3,9 +3,9 @@ import 'package:backstreets_widgets/util.dart';
 import 'package:backstreets_widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../providers.dart';
+import '../widgets/authors_page.dart';
 import '../widgets/books_page.dart';
 
 /// The main application screen.
@@ -36,7 +36,7 @@ class MainScreenState extends ConsumerState<MainScreen> {
             icon: const Text('The authors whose books will be shown'),
             builder: (final context) => CommonShortcuts(
               newCallback: newAuthor,
-              child: getAuthorsPage(),
+              child: const AuthorsPage(),
             ),
           )
         ],
@@ -65,50 +65,4 @@ class MainScreenState extends ConsumerState<MainScreen> {
               : null,
         ),
       );
-
-  /// Get the authors page.
-  Widget getAuthorsPage() {
-    final value = ref.watch(authorsProvider);
-    return value.when(
-      data: (final data) {
-        if (data.isEmpty) {
-          return const CenterText(
-            text: 'You have not added any authors to track.',
-            autofocus: true,
-          );
-        }
-        return BuiltSearchableListView(
-          items: data,
-          builder: (final context, final index) {
-            final author = data[index];
-            return SearchableListTile(
-              searchString: author,
-              child: CommonShortcuts(
-                copyText: author,
-                deleteCallback: () async {
-                  final authors = await ref.watch(authorsProvider.future);
-                  authors.removeWhere((final element) => element == author);
-                  final preferences =
-                      await ref.watch(sharedPreferencesProvider.future);
-                  await preferences.setStringList(authorsKey, authors);
-                  ref.invalidate(authorsProvider);
-                },
-                child: ListTile(
-                  autofocus: index == 0,
-                  title: Text(author),
-                  onTap: () => launchUrl(
-                    ref.watch(
-                      authorUriProvider.call(author),
-                    ),
-                  ),
-                ),
-              ),
-            );
-          },
-        );
-      },
-      error: ErrorListView.withPositional,
-      loading: LoadingWidget.new,
-    );
-  }
 }

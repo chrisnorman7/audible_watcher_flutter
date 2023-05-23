@@ -10,6 +10,7 @@
     "HINSTANCE",
     "pubdate",
     "pubspec",
+    "Reorderable",
     "riverpod",
     "Schyler",
     "todos",
