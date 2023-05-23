@@ -7,13 +7,14 @@ environment:
   sdk: ">=2.17.0 <3.0.0"
 
 dependencies:
+  backstreets_widgets: ^0.7.0
   cupertino_icons: ^1.0.5
-  dio: ^4.0.4
-  file: ^6.1.4
+  dio: ^5.1.2
   flutter:
     sdk: flutter
+  flutter_riverpod: ^2.3.6
   html: ^0.15.0
-  shared_preferences: ^2.0.15
+  shared_preferences: ^2.1.1
   url_launcher: ^6.1.6
 
 dev_dependencies:

@@ -1,6 +1,3 @@
-/// Provides the [Audiobook] class.
-library audiobook;
-
 /// A book to show.
 class Audiobook {
   /// Create an instance.
