@@ -1,7 +1,9 @@
 import 'package:backstreets_widgets/screens.dart';
+import 'package:backstreets_widgets/shortcuts.dart';
 import 'package:backstreets_widgets/util.dart';
 import 'package:backstreets_widgets/widgets.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers.dart';
@@ -29,7 +31,25 @@ class MainScreenState extends ConsumerState<MainScreen> {
           TabbedScaffoldTab(
             title: 'Books',
             icon: const Text('The books that have been found'),
-            builder: (final context) => const BooksPage(),
+            actions: [
+              IconButton(
+                onPressed: () => ref.invalidate(booksProvider),
+                icon: const Icon(
+                  Icons.refresh,
+                  semanticLabel: 'Refresh Books',
+                ),
+              )
+            ],
+            builder: (final context) => CallbackShortcuts(
+              bindings: {
+                SingleActivator(
+                  LogicalKeyboardKey.keyR,
+                  control: useControlKey,
+                  meta: useMetaKey,
+                ): () => ref.invalidate(booksProvider)
+              },
+              child: const BooksPage(),
+            ),
           ),
           TabbedScaffoldTab(
             title: 'Authors',
